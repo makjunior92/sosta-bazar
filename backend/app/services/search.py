@@ -57,7 +57,7 @@ async def scrape_all_stores(
     area: str | None,
     store_filter: str = "all",
     job_id: str | None = None,
-) -> tuple[list[dict], list[str], list[str]]:
+) -> dict:
     adapters = get_adapters_for_stores(store_filter)
     all_offers: list[dict] = []
     checked: list[str] = []
@@ -97,6 +97,34 @@ async def scrape_all_stores(
         "related_offers": related,
         "stores_checked": checked,
         "stores_failed": failed,
+    }
+
+
+def _normalize_cached_payload(query: str, data: dict) -> dict:
+    """Re-partition stale cache entries and ensure related_offers is always split."""
+    offers = list(data.get("offers") or [])
+    related = list(data.get("related_offers") or [])
+
+    needs_repartition = (
+        not related
+        and offers
+        and not any(o.get("relevance_score") is not None for o in offers)
+    )
+    if needs_repartition:
+        exact, related = partition_offers(query, offers)
+        mark_best_deals(exact)
+        offers, related = exact, related
+    elif offers or related:
+        combined = offers + related
+        exact, related = partition_offers(query, combined)
+        mark_best_deals(exact)
+        offers, related = exact, related
+
+    return {
+        **data,
+        "cached": True,
+        "offers": offers,
+        "related_offers": related,
     }
 
 
@@ -162,8 +190,7 @@ async def run_search(
     if not force_refresh:
         cached = await get_cached_search(key)
         if cached:
-            cached["cached"] = True
-            return cached
+            return _normalize_cached_payload(query, cached)
 
     job = SearchJob(query=query, area=area, status=SearchJobStatus.running)
     db.add(job)

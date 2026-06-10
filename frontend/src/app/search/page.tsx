@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useState } from "react";
 
-import { DealCard } from "@/components/DealCard";
+import { PaginatedOfferSection } from "@/components/PaginatedOfferSection";
 import { SearchBar } from "@/components/SearchBar";
 import { SearchLoadingState } from "@/components/SearchLoadingState";
 import { useSearchSSE } from "@/hooks/useSearchSSE";
@@ -28,16 +28,6 @@ function sortOffers(offers: Offer[], sort: string): Offer[] {
     if (ar !== br) return br - ar;
     return au - bu;
   });
-}
-
-function OfferGrid({ offers }: { offers: Offer[] }) {
-  return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {offers.map((offer, i) => (
-        <DealCard key={`${offer.store_slug}-${offer.title}-${i}`} offer={offer} />
-      ))}
-    </div>
-  );
 }
 
 function SearchResults() {
@@ -72,7 +62,9 @@ function SearchResults() {
 
     searchProducts(q, { area, sort, force_refresh: false })
       .then((res) => {
-        if (res.cached && res.offers.length > 0) {
+        const hasExact = res.offers.length > 0;
+        const hasRelated = (res.related_offers?.length ?? 0) > 0;
+        if (res.cached && (hasExact || hasRelated)) {
           setOffers(res.offers);
           setRelatedOffers(res.related_offers || []);
           setCached(true);
@@ -126,6 +118,7 @@ function SearchResults() {
               >
                 <option value="unit_price">{t("sortUnitPrice")}</option>
                 <option value="price">{t("sortPrice")}</option>
+                <option value="relevance">{t("sortRelevance")}</option>
               </select>
             )}
           </div>
@@ -140,25 +133,33 @@ function SearchResults() {
 
           {showEmpty && <p className="text-emerald-700">{t("noProducts")}</p>}
 
-          {sortedOffers.length > 0 && (
-            <section className="mb-10">
-              <h2 className="mb-4 text-lg font-semibold text-emerald-900">
-                {t("bestMatches", { query: q })}
-                <span className="ml-2 text-sm font-normal text-emerald-600">({sortedOffers.length})</span>
-              </h2>
-              <OfferGrid offers={sortedOffers} />
-            </section>
+          {!isLoading && sortedOffers.length > 0 && (
+            <PaginatedOfferSection
+              title={
+                <>
+                  {t("bestMatches", { query: q })}
+                  <span className="ml-2 text-sm font-normal text-emerald-600">
+                    ({sortedOffers.length})
+                  </span>
+                </>
+              }
+              offers={sortedOffers}
+            />
           )}
 
-          {sortedRelated.length > 0 && (
-            <section>
-              <h2 className="mb-1 text-lg font-semibold text-emerald-900">
-                {t("relatedProducts")}
-                <span className="ml-2 text-sm font-normal text-emerald-600">({sortedRelated.length})</span>
-              </h2>
-              <p className="mb-4 text-sm text-emerald-600">{t("relatedHint", { query: q })}</p>
-              <OfferGrid offers={sortedRelated} />
-            </section>
+          {!isLoading && sortedRelated.length > 0 && (
+            <PaginatedOfferSection
+              title={
+                <>
+                  {t("relatedProducts")}
+                  <span className="ml-2 text-sm font-normal text-emerald-600">
+                    ({sortedRelated.length})
+                  </span>
+                </>
+              }
+              hint={t("relatedHint", { query: q })}
+              offers={sortedRelated}
+            />
           )}
         </>
       )}

@@ -17,7 +17,7 @@ async def get_redis() -> aioredis.Redis:
 
 
 def cache_key(query: str, stores: str = "all", area: str = "") -> str:
-    return f"search:{query.lower().strip()}:{stores}:{area.lower().strip()}"
+    return f"search:v2:{query.lower().strip()}:{stores}:{area.lower().strip()}"
 
 
 async def get_cached_search(key: str) -> dict[str, Any] | None:
