@@ -22,7 +22,7 @@ function filterOffers(offers: Offer[], refine: string): Offer[] {
 }
 
 interface PaginatedOfferSectionProps {
-  title: React.ReactNode;
+  title?: React.ReactNode;
   hint?: string;
   offers: Offer[];
   defaultPageSize?: PageSizeOption;
@@ -61,11 +61,13 @@ export function PaginatedOfferSection({
   if (offers.length === 0) return null;
 
   return (
-    <section className="mb-10">
-      <div className="mb-4">
-        <h2 className="text-lg font-semibold text-emerald-900">{title}</h2>
-        {hint && <p className="mt-1 text-sm text-emerald-600">{hint}</p>}
-      </div>
+    <section>
+      {(title || hint) && (
+        <div className="mb-4">
+          {title && <h2 className="text-lg font-semibold text-emerald-900">{title}</h2>}
+          {hint && <p className="mt-1 text-sm text-emerald-600">{hint}</p>}
+        </div>
+      )}
 
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative flex-1 sm:max-w-md">
