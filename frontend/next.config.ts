@@ -7,7 +7,9 @@ const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 const nextConfig: NextConfig = {
   output: "standalone",
-  ...(basePath ? { basePath, assetPrefix: basePath } : {}),
+  ...(basePath
+    ? { basePath, assetPrefix: basePath, trailingSlash: true }
+    : {}),
 };
 
 export default withNextIntl(nextConfig);
