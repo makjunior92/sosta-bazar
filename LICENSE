@@ -1,0 +1,36 @@
+Copyright (c) 2026 makjunior92. All Rights Reserved.
+
+PROPRIETARY SOFTWARE LICENSE
+
+This repository and all of its contents — including but not limited to
+source code, documentation, configuration, scraper logic, UI design,
+database schemas, and deployment scripts (collectively, the "Software")
+— are the exclusive property of the copyright holder.
+
+NO PERMISSION IS GRANTED to any person or entity to:
+
+  • copy, clone, fork, or reproduce the Software or any part of it;
+  • modify, adapt, translate, or create derivative works;
+  • distribute, publish, sublicense, sell, or otherwise make the
+    Software available to any third party;
+  • use the Software, its architecture, or its implementation for
+    any commercial or non-commercial purpose;
+
+without prior written consent from the copyright holder.
+
+Unauthorized use of this Software may violate copyright law and other
+applicable laws. The copyright holder reserves the right to pursue all
+available legal remedies, including injunctive relief and damages.
+
+LIMITATIONS
+
+  • Copyright protects the specific expression of this Software (code,
+    text, layout), not general ideas such as "price comparison" or
+    "grocery search." Others may build similar products independently
+    if they do not copy this Software.
+  • Viewing this repository on GitHub does not grant any license to
+    use the Software beyond what GitHub's Terms of Service allow for
+    platform operation.
+
+For licensing inquiries or written permission, contact the repository
+owner via GitHub: https://github.com/makjunior92

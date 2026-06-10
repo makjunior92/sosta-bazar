@@ -2,6 +2,9 @@
 
 Compare grocery prices across Bangladesh's top online stores — one search, best deals.
 
+**Copyright © 2026 [makjunior92](https://github.com/makjunior92). All Rights Reserved.**  
+This project is proprietary. See [LICENSE](LICENSE) — copying, forking, or reusing this code without written permission is not allowed.
+
 Monorepo layout:
 
 | Folder | Stack |
