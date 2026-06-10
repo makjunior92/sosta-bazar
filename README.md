@@ -47,9 +47,6 @@ GitHub Actions runs on every push/PR to `main`:
 
 ## Production
 
-Use pre-built images from GHCR:
+Deployed at **https://quantumflux.cloud/sostabazar/** via GitHub Actions.
 
-```bash
-cd deploy
-docker compose -f docker-compose.prod.yml up -d
-```
+See [`deploy/README.md`](deploy/README.md) for VPS setup and CI/CD secrets.
