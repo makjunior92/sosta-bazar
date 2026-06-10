@@ -4,7 +4,7 @@ from decimal import Decimal
 from thefuzz import fuzz
 
 from app.scrapers.base import RawOffer
-from app.services.unit_price import compute_unit_price, extract_unit_info
+from app.services.unit_price import compute_unit_price
 
 # Product types that follow the query word → usually NOT the base product (e.g. "milk chocolate")
 COMPOUND_SUFFIXES = (

@@ -1,4 +1,3 @@
-import asyncio
 import json
 from uuid import UUID
 
@@ -9,9 +8,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.core.database import get_db
-from app.core.redis_client import get_redis
-from app.models import Offer, Product, SearchJob, Store
-from app.schemas import CompareResponse, HealthResponse, OfferOut, ProductOut, SearchResponse, StoreOut
+from app.models import Offer, Product, Store
+from app.schemas import CompareResponse, OfferOut, ProductOut, SearchResponse, StoreOut
 from app.services.search import get_deals, run_search, scrape_all_stores, seed_stores
 
 router = APIRouter()

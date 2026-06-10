@@ -10,8 +10,6 @@ def run_async(coro):
 @celery_app.task(name="worker.tasks.refresh_popular_searches")
 def refresh_popular_searches():
     async def _run():
-        from sqlalchemy.ext.asyncio import AsyncSession
-
         from app.core.database import AsyncSessionLocal
         from app.services.search import run_search, seed_stores
 
