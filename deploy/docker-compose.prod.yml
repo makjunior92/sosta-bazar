@@ -1,0 +1,85 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-sosta}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sosta}
+      POSTGRES_DB: ${POSTGRES_DB:-sosta_bazar}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sosta -d sosta_bazar"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  api:
+    image: ghcr.io/makjunior92/sosta-bazar-backend:latest
+    environment:
+      DATABASE_URL: postgresql+asyncpg://sosta:sosta@postgres:5432/sosta_bazar
+      REDIS_URL: redis://redis:6379/0
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    shm_size: "2gb"
+
+  worker:
+    image: ghcr.io/makjunior92/sosta-bazar-backend:latest
+    command: celery -A worker.celery_app.celery_app worker --loglevel=info --concurrency=2
+    environment:
+      DATABASE_URL: postgresql+asyncpg://sosta:sosta@postgres:5432/sosta_bazar
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    shm_size: "2gb"
+
+  beat:
+    image: ghcr.io/makjunior92/sosta-bazar-backend:latest
+    command: celery -A worker.celery_app.celery_app beat --loglevel=info
+    environment:
+      DATABASE_URL: postgresql+asyncpg://sosta:sosta@postgres:5432/sosta_bazar
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      - redis
+      - worker
+    restart: unless-stopped
+
+  web:
+    image: ghcr.io/makjunior92/sosta-bazar-frontend:latest
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - web
+      - api
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

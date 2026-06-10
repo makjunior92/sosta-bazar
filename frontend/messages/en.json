@@ -1,0 +1,64 @@
+{
+  "common": {
+    "appName": "Sosta Bazar",
+    "deals": "Deals",
+    "stores": "Stores",
+    "buy": "Buy",
+    "cached": "cached",
+    "offline": "offline",
+    "active": "Active",
+    "inactive": "Inactive",
+    "loading": "Loading...",
+    "noImage": "No image found",
+    "bestDeal": "Best Deal",
+    "unit": "unit"
+  },
+  "footer": {
+    "tagline": "Compare prices, save money."
+  },
+  "home": {
+    "title": "Find the <cheapest>cheapest</cheapest> groceries",
+    "cheapest": "cheapest",
+    "subtitle": "Compare prices across Bangladesh's top online stores in one search.",
+    "storesWeCompare": "Stores we compare",
+    "todaysDeals": "Today's best deals"
+  },
+  "search": {
+    "placeholder": "Search products — rice, butter, milk...",
+    "comparePrices": "Compare Prices",
+    "resultsFor": "Results for \"{query}\"",
+    "noProducts": "No products found. Try a different search term.",
+    "bestMatches": "Best matches for \"{query}\"",
+    "relatedProducts": "Related products",
+    "relatedHint": "Items containing \"{query}\" but not the exact product — e.g. milk chocolate, milk butter",
+    "sortUnitPrice": "Lowest unit price",
+    "sortPrice": "Lowest price",
+    "loadingPreparing": "Preparing your search...",
+    "loadingConnecting": "Connecting to stores...",
+    "loadingComparing": "Comparing prices across stores...",
+    "loadingFinding": "Finding the best deals for \"{query}\"",
+    "loadingInit": "Initializing scrapers...",
+    "progressStarting": "Starting search...",
+    "progressAllStores": "Searching all stores...",
+    "progressChecking": "Checking {store}...",
+    "progressFound": "{store}: {count} products found",
+    "progressUnavailable": "{store}: unavailable",
+    "progressDone": "Done!"
+  },
+  "deals": {
+    "title": "Best Deals",
+    "subtitle": "Cheapest finds across all stores, updated regularly.",
+    "empty": "No deals yet. Run a search to populate deals."
+  },
+  "storesPage": {
+    "title": "Store Status",
+    "subtitle": "Health and coverage for each price source.",
+    "lastScraped": "Last scraped: {date}"
+  },
+  "product": {
+    "notFound": "Product not found or API unavailable.",
+    "priceHistory": "Price History",
+    "noHistory": "No price history yet.",
+    "availableOffers": "Available offers"
+  }
+}

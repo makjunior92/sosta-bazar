@@ -1,0 +1,64 @@
+{
+  "common": {
+    "appName": "সোস্তা বাজার",
+    "deals": "সেরা ডিল",
+    "stores": "দোকান",
+    "buy": "কিনুন",
+    "cached": "ক্যাশড",
+    "offline": "অফলাইন",
+    "active": "সক্রিয়",
+    "inactive": "নিষ্ক্রিয়",
+    "loading": "লোড হচ্ছে...",
+    "noImage": "ছবি পাওয়া যায়নি",
+    "bestDeal": "সেরা ডিল",
+    "unit": "একক"
+  },
+  "footer": {
+    "tagline": "দাম তুলুন, টাকা বাঁচান।"
+  },
+  "home": {
+    "title": "<cheapest>সবচেয়ে সস্তা</cheapest> কেনাকাটা খুঁজুন",
+    "cheapest": "সবচেয়ে সস্তা",
+    "subtitle": "বাংলাদেশের শীর্ষ অনলাইন দোকানগুলোর দাম এক জায়গায় তুলুন।",
+    "storesWeCompare": "আমরা যে দোকানগুলো তুলনা করি",
+    "todaysDeals": "আজকের সেরা ডিল"
+  },
+  "search": {
+    "placeholder": "পণ্য খুঁজুন — চাল, মাখন, দুধ...",
+    "comparePrices": "দাম তুলুন",
+    "resultsFor": "\"{query}\" এর ফলাফল",
+    "noProducts": "কোনো পণ্য পাওয়া যায়নি। অন্য কিছু খুঁজে দেখুন।",
+    "bestMatches": "\"{query}\" এর জন্য সেরা মিল",
+    "relatedProducts": "সম্পর্কিত পণ্য",
+    "relatedHint": "\"{query}\" আছে কিন্তু মূল পণ্য নয় — যেমন মিল্ক চকলেট, মিল্ক বাটার",
+    "sortUnitPrice": "সর্বনিম্ন একক দাম",
+    "sortPrice": "সর্বনিম্ন দাম",
+    "loadingPreparing": "আপনার সার্চ প্রস্তুত করা হচ্ছে...",
+    "loadingConnecting": "দোকানগুলোর সাথে সংযোগ হচ্ছে...",
+    "loadingComparing": "সব দোকানে দাম তুলনা করা হচ্ছে...",
+    "loadingFinding": "\"{query}\" এর জন্য সেরা ডিল খোঁজা হচ্ছে",
+    "loadingInit": "স্ক্র্যাপার চালু হচ্ছে...",
+    "progressStarting": "সার্চ শুরু...",
+    "progressAllStores": "সব দোকানে খোঁজা হচ্ছে...",
+    "progressChecking": "{store} চেক করা হচ্ছে...",
+    "progressFound": "{store}: {count}টি পণ্য পাওয়া গেছে",
+    "progressUnavailable": "{store}: অনুপলব্ধ",
+    "progressDone": "সম্পন্ন!"
+  },
+  "deals": {
+    "title": "সেরা ডিল",
+    "subtitle": "সব দোকান থেকে সবচেয়ে সস্তা পণ্য, নিয়মিত আপডেট।",
+    "empty": "এখনো কোনো ডিল নেই। ডিল পেতে সার্চ করুন।"
+  },
+  "storesPage": {
+    "title": "দোকানের অবস্থা",
+    "subtitle": "প্রতিটি দোকানের স্বাস্থ্য ও কভারেজ।",
+    "lastScraped": "সর্বশেষ স্ক্র্যাপ: {date}"
+  },
+  "product": {
+    "notFound": "পণ্য পাওয়া যায়নি বা API অফলাইন।",
+    "priceHistory": "দামের ইতিহাস",
+    "noHistory": "এখনো দামের ইতিহাস নেই।",
+    "availableOffers": "উপলব্ধ অফার"
+  }
+}
