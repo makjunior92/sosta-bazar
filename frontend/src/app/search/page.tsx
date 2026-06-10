@@ -14,6 +14,40 @@ import type { Offer } from "@/lib/api/types";
 type SearchPhase = "idle" | "checking" | "scraping" | "done";
 type ResultTab = "matches" | "related";
 
+interface SearchSessionCache {
+  q: string;
+  area?: string;
+  offers: Offer[];
+  relatedOffers: Offer[];
+  apiCached: boolean;
+  tab: ResultTab;
+}
+
+function cacheKey(q: string, area?: string) {
+  return `sosta-search:${q}:${area ?? ""}`;
+}
+
+function loadSessionCache(q: string, area?: string): SearchSessionCache | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = sessionStorage.getItem(cacheKey(q, area));
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as SearchSessionCache;
+    return parsed.q === q ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+function saveSessionCache(data: SearchSessionCache) {
+  if (typeof window === "undefined") return;
+  try {
+    sessionStorage.setItem(cacheKey(data.q, data.area), JSON.stringify(data));
+  } catch {
+    // ignore quota errors
+  }
+}
+
 function sortOffers(offers: Offer[], sort: string): Offer[] {
   return [...offers].sort((a, b) => {
     if (sort === "price") {
@@ -57,6 +91,17 @@ function SearchResults() {
       return;
     }
 
+    const session = loadSessionCache(q, area);
+    if (session && (session.offers.length > 0 || session.relatedOffers.length > 0)) {
+      setOffers(session.offers);
+      setRelatedOffers(session.relatedOffers);
+      setCached(session.apiCached);
+      setTab(session.tab);
+      setPhase("done");
+      setUseStream(false);
+      return;
+    }
+
     setPhase("checking");
     setOffers([]);
     setRelatedOffers([]);
@@ -69,11 +114,20 @@ function SearchResults() {
         const hasExact = res.offers.length > 0;
         const hasRelated = (res.related_offers?.length ?? 0) > 0;
         if (res.cached && (hasExact || hasRelated)) {
+          const nextTab: ResultTab = !hasExact && hasRelated ? "related" : "matches";
           setOffers(res.offers);
           setRelatedOffers(res.related_offers || []);
           setCached(true);
+          setTab(nextTab);
           setPhase("done");
-          if (!hasExact && hasRelated) setTab("related");
+          saveSessionCache({
+            q,
+            area,
+            offers: res.offers,
+            relatedOffers: res.related_offers || [],
+            apiCached: true,
+            tab: nextTab,
+          });
         } else {
           setPhase("scraping");
           setUseStream(true);
@@ -87,14 +141,28 @@ function SearchResults() {
 
   useEffect(() => {
     if (sse.complete) {
+      const nextTab: ResultTab =
+        sse.offers.length === 0 && sse.relatedOffers.length > 0 ? "related" : "matches";
       setOffers(sse.offers);
       setRelatedOffers(sse.relatedOffers);
+      setTab(nextTab);
       setPhase("done");
-      if (sse.offers.length === 0 && sse.relatedOffers.length > 0) {
-        setTab("related");
-      }
+      saveSessionCache({
+        q,
+        area,
+        offers: sse.offers,
+        relatedOffers: sse.relatedOffers,
+        apiCached: false,
+        tab: nextTab,
+      });
     }
-  }, [sse.complete, sse.offers, sse.relatedOffers]);
+  }, [sse.complete, sse.offers, sse.relatedOffers, q, area]);
+
+  useEffect(() => {
+    if (phase === "done" && q && (offers.length > 0 || relatedOffers.length > 0)) {
+      saveSessionCache({ q, area, offers, relatedOffers, apiCached: cached, tab });
+    }
+  }, [phase, offers, relatedOffers, q, area, tab, cached]);
 
   const sortedOffers = useMemo(() => sortOffers(offers, sort), [offers, sort]);
   const sortedRelated = useMemo(() => sortOffers(relatedOffers, sort), [relatedOffers, sort]);

@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { getSearchStreamUrl } from "@/lib/api/client";
 import type { Offer } from "@/lib/api/types";
@@ -19,6 +19,9 @@ interface SSEState {
 
 export function useSearchSSE(query: string, area?: string, enabled = false) {
   const t = useTranslations("search");
+  const tRef = useRef(t);
+  tRef.current = t;
+
   const [state, setState] = useState<SSEState>({
     loading: false,
     progress: [],
@@ -30,12 +33,21 @@ export function useSearchSSE(query: string, area?: string, enabled = false) {
     complete: false,
   });
 
+  const completedKeyRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    completedKeyRef.current = null;
+  }, [query, area]);
+
   const run = useCallback(() => {
+    const streamKey = `${query}:${area ?? ""}`;
+
     if (!query || !enabled) return;
+    if (completedKeyRef.current === streamKey) return;
 
     setState({
       loading: true,
-      progress: [t("progressStarting")],
+      progress: [tRef.current("progressStarting")],
       offers: [],
       relatedOffers: [],
       storesChecked: [],
@@ -49,29 +61,31 @@ export function useSearchSSE(query: string, area?: string, enabled = false) {
     es.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
+        const tr = tRef.current;
         if (data.event === "started") {
-          setState((s) => ({ ...s, progress: [...s.progress, t("progressAllStores")] }));
+          setState((s) => ({ ...s, progress: [...s.progress, tr("progressAllStores")] }));
         } else if (data.event === "store_start") {
           setState((s) => ({
             ...s,
-            progress: [...s.progress, t("progressChecking", { store: data.store })],
+            progress: [...s.progress, tr("progressChecking", { store: data.store })],
           }));
         } else if (data.event === "store_done") {
           setState((s) => ({
             ...s,
             progress: [
               ...s.progress,
-              t("progressFound", { store: data.store, count: data.count }),
+              tr("progressFound", { store: data.store, count: data.count }),
             ],
             storesChecked: [...s.storesChecked, data.store],
           }));
         } else if (data.event === "store_error") {
           setState((s) => ({
             ...s,
-            progress: [...s.progress, t("progressUnavailable", { store: data.store })],
+            progress: [...s.progress, tr("progressUnavailable", { store: data.store })],
             storesFailed: [...s.storesFailed, data.store],
           }));
         } else if (data.event === "complete") {
+          completedKeyRef.current = streamKey;
           setState((s) => ({
             ...s,
             loading: false,
@@ -80,7 +94,7 @@ export function useSearchSSE(query: string, area?: string, enabled = false) {
             relatedOffers: data.related_offers || [],
             storesChecked: data.stores_checked || [],
             storesFailed: data.stores_failed || [],
-            progress: [...s.progress, t("progressDone")],
+            progress: [...s.progress, tr("progressDone")],
           }));
           es.close();
         }
@@ -95,7 +109,7 @@ export function useSearchSSE(query: string, area?: string, enabled = false) {
     };
 
     return () => es.close();
-  }, [query, area, enabled, t]);
+  }, [query, area, enabled]);
 
   useEffect(() => {
     return run();
