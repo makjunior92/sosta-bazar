@@ -220,11 +220,28 @@ async def get_deals(db: AsyncSession, limit: int = 20) -> list[dict]:
         select(SearchResult)
         .where(SearchResult.is_best_deal.is_(True))
         .order_by(SearchResult.price_bdt.asc())
-        .limit(limit)
     )
     rows = result.scalars().all()
+
+    # #region agent log
+    try:
+        import json as _json
+        from pathlib import Path as _Path
+        _dup = len(rows) - len({(r.product_url, r.store_slug) for r in rows})
+        _Path("/Users/mak/Desktop/sosta bazar/.cursor").mkdir(parents=True, exist_ok=True)
+        with open("/Users/mak/Desktop/sosta bazar/.cursor/debug-71bab8.log", "a") as _f:
+            _f.write(_json.dumps({"sessionId": "71bab8", "location": "search.py:get_deals", "message": "deals query", "data": {"rawCount": len(rows), "duplicateRows": _dup, "limit": limit}, "hypothesisId": "A", "timestamp": __import__("time").time() * 1000}) + "\n")
+    except OSError:
+        pass
+    # #endregion
+
+    seen: set[tuple[str, str]] = set()
     deals = []
     for r in rows:
+        key = (r.product_url, r.store_slug)
+        if key in seen:
+            continue
+        seen.add(key)
         store = await db.scalar(select(Store).where(Store.slug == r.store_slug))
         deals.append(
             {
@@ -239,4 +256,16 @@ async def get_deals(db: AsyncSession, limit: int = 20) -> list[dict]:
                 "is_best_deal": True,
             }
         )
+        if len(deals) >= limit:
+            break
+
+    # #region agent log
+    try:
+        import json as _json
+        with open("/Users/mak/Desktop/sosta bazar/.cursor/debug-71bab8.log", "a") as _f:
+            _f.write(_json.dumps({"sessionId": "71bab8", "location": "search.py:get_deals", "message": "deals deduped", "data": {"returnedCount": len(deals), "uniqueKeys": len(seen)}, "hypothesisId": "A", "runId": "post-fix", "timestamp": __import__("time").time() * 1000}) + "\n")
+    except OSError:
+        pass
+    # #endregion
+
     return deals

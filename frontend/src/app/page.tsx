@@ -57,7 +57,7 @@ export default async function HomePage() {
           <h2 className="mb-4 text-lg font-semibold text-emerald-900">{t("todaysDeals")}</h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {deals.map((deal, i) => (
-              <DealCard key={i} offer={deal} />
+              <DealCard key={`${deal.store_slug}-${deal.product_url}-${i}`} offer={deal} />
             ))}
           </div>
         </section>
