@@ -16,6 +16,9 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
     services:
       postgres:
         image: postgres:16-alpine
@@ -36,14 +39,12 @@ jobs:
         with:
           python-version: "3.11"
       - run: pip install -r requirements.txt ruff pytest httpx
-        working-directory: backend
       - run: ruff check app worker tests
-        working-directory: backend
       - env:
           DATABASE_URL: postgresql+asyncpg://sosta:sosta@localhost:5432/sosta_bazar
           REDIS_URL: redis://localhost:6379/0
-        run: pytest tests/ -v
-        working-directory: backend
+          PYTHONPATH: .
+        run: python -m pytest tests/ -v
 
       - uses: actions/setup-node@v4
         with:
